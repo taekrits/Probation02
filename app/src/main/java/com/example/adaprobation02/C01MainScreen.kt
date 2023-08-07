@@ -84,11 +84,14 @@ fun C01MainScreen(
 
     val oDatePickerDialog =
         DatePickerDialog(oContext, { _, selectedYear, selectedMonth, selectedDay ->
-            val tSelectedDate = "$selectedYear-${selectedMonth + 1}-${selectedDay}"
+            val adjustedMonth = "${selectedMonth + 1}".padStart(2, '0')
+            val adjustedDay = "$selectedDay".padStart(2, '0')
+            val tSelectedDate = "$selectedYear-$adjustedMonth-$adjustedDay"
             val oSelectedDateEditable: Editable =
                 Editable.Factory.getInstance().newEditable(tSelectedDate)
             oViewModel.C_SETxDate(oSelectedDateEditable.toString())
         }, oYear, oMonth, oDay)
+
 
     LaunchedEffect(key1 = Unit){
         oViewModel.init(context = oContext)
@@ -347,11 +350,13 @@ fun C01DownloadListLayout(paItem: CDownloadList, piIndex: Int, poViewModel: C01M
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = paItem.tName
+            text = paItem.tName,
+            fontSize = 14.sp
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = paItem.tDateTime
+            text = paItem.tDateTime,
+            fontSize = 12.sp
         )
     }
 }
