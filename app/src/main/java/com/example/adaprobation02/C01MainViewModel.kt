@@ -1,64 +1,66 @@
 package com.example.adaprobation02
 
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.adaprobation02.data.helper.CDatabaseHelper
+import com.example.adaprobation02.data.mapper.mapToCDownloadList
 import com.example.adaprobation02.domain.CDownloadData
 import com.example.adaprobation02.domain.CDownloadList
-import java.time.LocalDate
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @RequiresApi(Build.VERSION_CODES.O)
 class C01MainViewModel : ViewModel() {
 
-    var bCheckAllData by mutableStateOf(false)
+    var bC_CheckAllData by mutableStateOf(false)
         private set
-    var bCheckSyncData by mutableStateOf(false)
+    var bC_CheckSyncData by mutableStateOf(false)
         private set
-    var bCheckClearOldData by mutableStateOf(false)
+    var bC_CheckClearOldData by mutableStateOf(false)
         private set
 
+    private var oMainList = listOf<CDownloadList>()
 
-
-    val aMockList = listOf(
-        CDownloadList(
-            bSelect = mutableStateOf(false),
-            tName = "บริษัท",
-            tDateTime = "2023-08-02 11:44:08"
-        ),
-        CDownloadList(
-            bSelect = mutableStateOf(false),
-            tName = "สาขา",
-            tDateTime = "2023-08-02 11:43:04"
-        ),
-        CDownloadList(
-            bSelect = mutableStateOf(false),
-            tName = "ผู้ใช้",
-            tDateTime = "2023-08-02 11:41:28"
-        ),
+    var oC_State by mutableStateOf(
+        CDownloadData()
     )
-    var oState by mutableStateOf(
-        CDownloadData(
-            tSearchEditText = "",
-            tDateEditText = LocalDate.now().toString(),
-            aDataDownloadList = aMockList
-        )
-    )
+
+    fun init(context: Context) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+
+                val db = CDatabaseHelper(context)
+                val stringList = db.C_GETxTaskDataList()
+                val data = stringList.map {
+                    it.mapToCDownloadList()
+                }
+                oC_State = oC_State.copy(
+                    aDataDownloadList = data
+                )
+                oMainList = data
+            }
+        }
+    }
 
     fun C_SETxCheckBoxAllData(bCheck: Boolean) {
-        bCheckAllData = bCheck
+        bC_CheckAllData = bCheck
         if (bCheck) {
-            oState = oState.copy(
-                aDataDownloadList = oState.aDataDownloadList.map {
+            oC_State = oC_State.copy(
+                aDataDownloadList = oC_State.aDataDownloadList.map {
                     it.bSelect.value = true
                     it
                 }
             )
         } else {
-            oState = oState.copy(
-                aDataDownloadList = oState.aDataDownloadList.map {
+            oC_State = oC_State.copy(
+                aDataDownloadList = oC_State.aDataDownloadList.map {
                     it.bSelect.value = false
                     it
                 }
@@ -66,19 +68,33 @@ class C01MainViewModel : ViewModel() {
         }
     }
 
+    fun onClickDownload() {
+
+        val listURL = oC_State.aDataDownloadList
+        listURL.forEach {
+            if (it.bSelect.value) {
+                println(it.tUri)
+            }
+        }
+
+        val list = listURL.filter { it.bSelect.value }.map { it.tUri }
+        println(list)
+
+    }
+
     fun C_SETxCheckBoxSyncData(bCheck: Boolean) {
-        bCheckSyncData = bCheck
+        bC_CheckSyncData = bCheck
 
     }
 
     fun C_SETxCheckBoxClearOldData(bCheck: Boolean) {
-        bCheckClearOldData = bCheck
+        bC_CheckClearOldData = bCheck
     }
 
     fun C_SETxCheckBoxListData(bNewCheck: Boolean, aItem: CDownloadList) {
 //        item.bSelect.value = newCheck
-        oState = oState.copy(
-            aDataDownloadList = oState.aDataDownloadList.map {
+        oC_State = oC_State.copy(
+            aDataDownloadList = oC_State.aDataDownloadList.map {
                 if (it == aItem) {
                     it.bSelect.value = bNewCheck
                 }
@@ -88,23 +104,23 @@ class C01MainViewModel : ViewModel() {
     }
 
     fun C_SETxTextFieldAndSearch(tText: String) {
-        oState = oState.copy(tSearchEditText = tText)
+        oC_State = oC_State.copy(tSearchEditText = tText)
 
         if (tText != "") {
-            oState = oState.copy(
-                aDataDownloadList = oState.aDataDownloadList.filter {
+            oC_State = oC_State.copy(
+                aDataDownloadList = oMainList.filter {
                     it.tName.contains(tText)
                 }
             )
         } else {
-            oState = oState.copy(
-                aDataDownloadList = aMockList
+            oC_State = oC_State.copy(
+                aDataDownloadList = oMainList
             )
         }
     }
 
     fun C_SETxDate(dDate: String) {
-        oState = oState.copy(
+        oC_State = oC_State.copy(
             tDateEditText = dDate
         )
     }

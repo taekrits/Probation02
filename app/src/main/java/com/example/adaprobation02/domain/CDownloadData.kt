@@ -15,6 +15,7 @@ data class CDownloadData(
 data class CDownloadList(
     var bSelect: MutableState<Boolean>,
     val tName: String,
-    val tDateTime: String
+    val tDateTime: String,
+    val tUri: String
 )
 

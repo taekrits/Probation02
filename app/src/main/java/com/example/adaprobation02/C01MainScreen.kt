@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             AdaProbation02Theme {
                 // A surface container using the 'background' color from the theme
@@ -88,6 +90,9 @@ fun C01MainScreen(
             oViewModel.C_SETxDate(oSelectedDateEditable.toString())
         }, oYear, oMonth, oDay)
 
+    LaunchedEffect(key1 = Unit){
+        oViewModel.init(context = oContext)
+    }
 
     Column() {
         Row(
@@ -105,7 +110,7 @@ fun C01MainScreen(
                     .size(30.dp)
             )
             TextField(
-                value = oViewModel.oState.tSearchEditText,
+                value = oViewModel.oC_State.tSearchEditText,
                 onValueChange = { ptNewText ->
 
                     oViewModel.C_SETxTextFieldAndSearch(ptNewText)
@@ -159,7 +164,7 @@ fun C01MainScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = oViewModel.bCheckAllData,
+                    checked = oViewModel.bC_CheckAllData,
                     onCheckedChange = { pbNewCheck ->
                         oViewModel.C_SETxCheckBoxAllData(pbNewCheck)
                     },
@@ -178,7 +183,7 @@ fun C01MainScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = oViewModel.bCheckSyncData,
+                    checked = oViewModel.bC_CheckSyncData,
                     onCheckedChange = { pbNewCheck ->
                         oViewModel.C_SETxCheckBoxSyncData(pbNewCheck)
                     },
@@ -191,7 +196,7 @@ fun C01MainScreen(
             }
 
         }
-        if (!oViewModel.bCheckSyncData) {
+        if (!oViewModel.bC_CheckSyncData) {
             C01BarSyncData(
                 poViewModel = oViewModel,
                 poClick = { oDatePickerDialog.show() }
@@ -199,8 +204,10 @@ fun C01MainScreen(
         }
         Spacer(modifier = Modifier.height(3.dp))
 
-        LazyColumn() {
-            itemsIndexed(oViewModel.oState.aDataDownloadList) { index, item ->
+        LazyColumn(
+            modifier = Modifier.padding(bottom = 50.dp)
+        ) {
+            itemsIndexed(oViewModel.oC_State.aDataDownloadList) { index, item ->
                 C01DownloadListLayout(
                     paItem = item,
                     piIndex = index,
@@ -208,27 +215,32 @@ fun C01MainScreen(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 3.dp)
-        ) {
-            Button(
-                onClick = { /*TODO*/ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 3.dp)
-                    .align(BottomCenter),
-                colors = ButtonDefaults.buttonColors(GreenDark),
-                shape = RoundedCornerShape(0.dp)
-            ) {
-                Text(
-                    text = "ดาวน์โหลด",
-                    color = Color.White,
-                )
-            }
-        }
 
+
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 3.dp)
+    ) {
+        Button(
+            onClick = {
+
+                oViewModel.onClickDownload()
+
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 3.dp)
+                .align(BottomCenter),
+            colors = ButtonDefaults.buttonColors(GreenDark),
+            shape = RoundedCornerShape(0.dp)
+        ) {
+            Text(
+                text = "ดาวน์โหลด",
+                color = Color.White,
+            )
+        }
     }
 }
 
@@ -250,7 +262,7 @@ fun C01BarSyncData(poViewModel: C01MainViewModel, poClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = poViewModel.bCheckClearOldData,
+                    checked = poViewModel.bC_CheckClearOldData,
                     onCheckedChange = { newCheck ->
                         poViewModel.C_SETxCheckBoxClearOldData(newCheck)
                     },
@@ -278,7 +290,7 @@ fun C01BarSyncData(poViewModel: C01MainViewModel, poClick: () -> Unit) {
                     modifier = Modifier
                         .width(160.dp),
                     enabled = false,
-                    value = poViewModel.oState.tDateEditText,
+                    value = poViewModel.oC_State.tDateEditText,
                     onValueChange = {
 
                     },
@@ -338,7 +350,7 @@ fun C01DownloadListLayout(paItem: CDownloadList, piIndex: Int, poViewModel: C01M
             text = paItem.tName
         )
         Text(
-            modifier = Modifier.weight(2f),
+            modifier = Modifier.weight(1f),
             text = paItem.tDateTime
         )
     }
@@ -363,7 +375,7 @@ fun C01DownloadListLayoutPreview() {
             mutableStateOf(false)
         }
         C01DownloadListLayout(CDownloadList(
-            bMock,"ffff","ffffff ffffff"
+            bMock,"test","00000000 000000", tUri = "test"
         ),
             1, C01MainViewModel()
         )
