@@ -1,6 +1,7 @@
 package com.example.adaprobation02
 
 import android.app.DatePickerDialog
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -41,29 +42,62 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.adaprobation02.data.roomDB.database.CDatabase
 import com.example.adaprobation02.domain.CDownloadList
 import com.example.adaprobation02.ui.theme.AdaProbation02Theme
 import com.example.adaprobation02.ui.theme.Green
 import com.example.adaprobation02.ui.theme.GreenDark
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.util.Calendar
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.MANAGE_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // ถ้ายังไม่มีสิทธิ์, ทำการขอสิทธิ์
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.MANAGE_EXTERNAL_STORAGE),
+                1000)
+
+            // MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE คือ int ที่กำหนดค่าเอง และจะได้รับค่านี้เมื่อผู้ใช้ตอบกลับ
+        } else {
+            // ทำงานต่อหากมีสิทธิ์
+        }
+
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            // ถ้ายังไม่มีสิทธิ์, ทำการขอสิทธิ์
+            ActivityCompat.requestPermissions(this,
+                arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                1001)
+
+            // MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE คือ int ที่กำหนดค่าเอง และจะได้รับค่านี้เมื่อผู้ใช้ตอบกลับ
+        } else {
+            // ทำงานต่อหากมีสิทธิ์
+        }
+
         setContent {
             AdaProbation02Theme {
                 // A surface container using the 'background' color from the theme
-                C01MainScreen()
+                 C01MainScreen()
             }
         }
     }
@@ -371,13 +405,14 @@ fun C01MainScreenPreview() {
 @Composable
 fun C01DownloadListLayoutPreview() {
     AdaProbation02Theme {
+        val db = CDatabase.getDatabase(LocalContext.current, LocalLifecycleOwner.current.lifecycleScope)
         val bMock = remember {
             mutableStateOf(false)
         }
         C01DownloadListLayout(CDownloadList(
             bMock,"test","00000000 000000", tUri = "test"
         ),
-            1, C01MainViewModel()
+            1, C01MainViewModel(db)
         )
 
     }

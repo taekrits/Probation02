@@ -11,7 +11,8 @@ import java.io.File
 
 
 class CDatabaseHelper(context: Context) : ISyncDataRepository {
-    val dbPath = context.getDatabasePath("SyncData.db").absolutePath
+     val dbPath = context.getDatabasePath("SyncData.db").absolutePath
+    //private val dbPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).path + "/Adasoft/SyncData.db"
     fun C_SETxOpenDatabase(): SQLiteDatabase {
         val file = File(dbPath)
         if (!file.exists()) {

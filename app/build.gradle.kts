@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -77,4 +79,17 @@ dependencies {
 
     //GSON
     implementation ("com.google.code.gson:gson:2.8.8")
+
+    //RoomDB
+    val room_version = "2.5.1"
+
+    implementation ("androidx.room:room-ktx:$room_version")
+    implementation ("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:${room_version}")
+
+    //hiltDI
+    implementation ("com.google.dagger:hilt-android:2.44")
+    kapt ("com.google.dagger:hilt-compiler:2.44")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+
 }

@@ -7,17 +7,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.adaprobation02.data.helper.CDatabaseHelper
-import com.example.adaprobation02.data.mapper.mapToCDownloadList
+import com.example.adaprobation02.data.roomDB.database.CDatabase
 import com.example.adaprobation02.domain.CDownloadData
 import com.example.adaprobation02.domain.CDownloadList
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
 
 @RequiresApi(Build.VERSION_CODES.O)
-class C01MainViewModel : ViewModel() {
+@HiltViewModel
+class C01MainViewModel @Inject constructor(private val db: CDatabase) : ViewModel() {
 
     var bC_CheckAllData by mutableStateOf(false)
         private set
@@ -33,6 +32,8 @@ class C01MainViewModel : ViewModel() {
     )
 
     fun init(context: Context) {
+
+        /*
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
 
@@ -47,6 +48,8 @@ class C01MainViewModel : ViewModel() {
                 oMainList = data
             }
         }
+         */
+
     }
 
     fun C_SETxCheckBoxAllData(bCheck: Boolean) {
