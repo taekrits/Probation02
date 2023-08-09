@@ -32,8 +32,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Alignment.Companion.CenterVertically
@@ -47,14 +45,15 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.adaprobation02.domain.CDownloadList
 import com.example.adaprobation02.ui.theme.AdaProbation02Theme
 import com.example.adaprobation02.ui.theme.Green
 import com.example.adaprobation02.ui.theme.GreenDark
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDate
 import java.util.Calendar
-
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +75,7 @@ fun C01MainScreen(
 ) {
 
     val oContext = LocalContext.current
-    val oViewModel: C01MainViewModel = viewModel<C01MainViewModel>()
+    val oViewModel: C01MainViewModel = hiltViewModel()
     val oCalendar = Calendar.getInstance()
     val oYear = oCalendar.get(Calendar.YEAR)
     val oMonth = oCalendar.get(Calendar.MONTH)
@@ -94,7 +93,7 @@ fun C01MainScreen(
 
 
     LaunchedEffect(key1 = Unit){
-        oViewModel.init(context = oContext)
+        oViewModel.init(poContext = oContext)
     }
 
     Column() {
@@ -210,7 +209,7 @@ fun C01MainScreen(
         LazyColumn(
             modifier = Modifier.padding(bottom = 50.dp)
         ) {
-            itemsIndexed(oViewModel.oC_State.aDataDownloadList) { index, item ->
+            itemsIndexed(oViewModel.oC_State.aoDataDownloadList) { index, item ->
                 C01DownloadListLayout(
                     paItem = item,
                     piIndex = index,
@@ -229,7 +228,7 @@ fun C01MainScreen(
         Button(
             onClick = {
 
-                oViewModel.onClickDownload()
+                oViewModel.C_SETxClickDownload(poContext = oContext)
 
             },
             modifier = Modifier
@@ -371,19 +370,3 @@ fun C01MainScreenPreview() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview(showBackground = true)
-@Composable
-fun C01DownloadListLayoutPreview() {
-    AdaProbation02Theme {
-        val bMock = remember {
-            mutableStateOf(false)
-        }
-        C01DownloadListLayout(CDownloadList(
-            bMock,"test","00000000 000000", tUri = "test"
-        ),
-            1, C01MainViewModel()
-        )
-
-    }
-}

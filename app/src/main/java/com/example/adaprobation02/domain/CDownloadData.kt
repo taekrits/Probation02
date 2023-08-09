@@ -8,14 +8,14 @@ data class CDownloadData(
     val bSyncData: Boolean = false,
     val bClearOldData: Boolean = false,
     val tDateEditText: String = "",
-    val aDataDownloadList: List<CDownloadList> = listOf(),
+    val aoDataDownloadList: List<CDownloadList> = listOf(),
     val bShowingOldDataLine: Boolean = true
 )
 
 data class CDownloadList(
     var bSelect: MutableState<Boolean>,
     val tName: String,
-    val tDateTime: String,
+    var tDateTime: String,
     val tUri: String
 )
 

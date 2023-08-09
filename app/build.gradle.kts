@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id ("com.google.dagger.hilt.android")
 }
 
 android {
@@ -33,6 +35,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -51,7 +58,7 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.9.0")
+    implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
@@ -76,5 +83,19 @@ dependencies {
     implementation ("com.maxkeppeler.sheets-compose-dialogs:calendar:1.2.0")
 
     //GSON
-    implementation ("com.google.code.gson:gson:2.8.8")
+    implementation ("com.google.code.gson:gson:2.10.1")
+    //GSON Retrofit
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    //retofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
+    //hiltDI
+    implementation ("com.google.dagger:hilt-android:2.44")
+    kapt ("com.google.dagger:hilt-compiler:2.44")
+    implementation ("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+
 }

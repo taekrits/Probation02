@@ -1,6 +1,6 @@
-package com.example.adaprobation02.data.repository
+package com.example.adaprobation02.data.database.repository
 
-import com.example.adaprobation02.data.model.CDataDownloadListDB
+import com.example.adaprobation02.data.database.model.CDataDownloadListDB
 
 interface ISyncDataRepository {
 
