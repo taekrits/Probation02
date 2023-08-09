@@ -217,8 +217,6 @@ fun C01MainScreen(
                 )
             }
         }
-
-
     }
     Box(
         modifier = Modifier

@@ -94,7 +94,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         val oDb = C_SETxOpenDatabase()
         oDb.beginTransaction()
         try {
-            val tSql = "INSERT INTO TCNMComp_L (FTCmpCode, FNLngID, FTCmpName, FTCmpShop, FTCmpDirector) VALUES (?, ?, ?, ?, ?)"
+            val tSql = "INSERT OR REPLACE INTO TCNMComp_L (FTCmpCode, FNLngID, FTCmpName, FTCmpShop, FTCmpDirector) VALUES (?, ?, ?, ?, ?)"
             val oStmt = oDb.compileStatement(tSql)
 
             for (item in paData) {
@@ -122,7 +122,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         try {
             val tSql =
                 """
-            INSERT INTO TCNMComp (FTCmpCode, FTCmpTel, FTCmpFax, FTBchcode, FTCmpWhsInOrEx, FTCmpRetInOrEx, 
+            INSERT OR REPLACE INTO TCNMComp (FTCmpCode, FTCmpTel, FTCmpFax, FTBchcode, FTCmpWhsInOrEx, FTCmpRetInOrEx, 
             FTCmpEmail, FTRteCode, FTVatCode, FDLastUpdOn, FTLastUpdBy, FDCreateOn, FTCreateBy) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """
@@ -159,7 +159,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         oDb.beginTransaction()
         try {
             val tSql = """
-            INSERT INTO TCNMProvince (
+            INSERT OR REPLACE INTO TCNMProvince (
                 FTPvnCode, FTZneCode, FTPvnLatitude, FTPvnLongitude, 
                 FDLastUpdOn, FTLastUpdBy, FDCreateOn, FTCreateBy
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -192,7 +192,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         oDb.beginTransaction()
         try {
             val tSql = """
-            INSERT INTO TCNMProvince_L (
+            INSERT OR REPLACE INTO TCNMProvince_L (
                 FTPvnCode, FNLngID, FTPvnName
             ) VALUES (?, ?, ?)
         """
@@ -219,7 +219,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         oDb.beginTransaction()
         try {
             val tSql = """
-            INSERT INTO TCNMDistrict (
+            INSERT OR REPLACE INTO TCNMDistrict (
                 FTDstCode, FTDstPost, FTPvnCode, FTDstLatitude, FTDstLongitude,
                 FDLastUpdOn, FTLastUpdBy, FDCreateOn, FTCreateBy
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -253,7 +253,7 @@ class CDatabaseHelper(context: Context) : ISyncDataRepository {
         oDb.beginTransaction()
         try {
             val tSql = """
-            INSERT INTO TCNMDistrict_L (FTDstCode, FNLngID, FTDstName) 
+            INSERT OR REPLACE INTO TCNMDistrict_L (FTDstCode, FNLngID, FTDstName) 
             VALUES (?, ?, ?)
         """
             val oStmt = oDb.compileStatement(tSql)

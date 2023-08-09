@@ -138,8 +138,8 @@ class C01MainViewModel @Inject constructor(private val api: IAdaApi ) : ViewMode
                 val aoSelectedList = oC_State.aoDataDownloadList.filter { it.bSelect.value }
 
                 aoSelectedList.forEach { it ->
-                    val tOUrl = it.tUri
-                    val tUrl = it.tUri.split('?').first().drop(1)
+                    val tFullUrl = it.tUri
+                    val tUrl = tFullUrl.split('?').first().drop(1)
 
                     when (tUrl) {
                         "Company/Download" -> C_GETxProcessCompanyData(tUrl, tDate, poContext)
@@ -148,7 +148,7 @@ class C01MainViewModel @Inject constructor(private val api: IAdaApi ) : ViewMode
                         else -> println("Unknown URL: $tUrl")
                     }
                         //oDb.C_SETxDelete()
-                        oDb.C_SETxUpdateTSynLast(tFormattedDateTime,tOUrl)
+                        oDb.C_SETxUpdateTSynLast(tFormattedDateTime,tFullUrl)
 
                     val aoStringList = oDb.C_GETxTaskDataList()
                     val aoData = aoStringList.map {
@@ -158,8 +158,7 @@ class C01MainViewModel @Inject constructor(private val api: IAdaApi ) : ViewMode
                         aoDataDownloadList = aoData,
                     )
                     oC_MainList = aoData
-
-
+                    bC_CheckAllData = false
 
                 }
 
@@ -180,7 +179,6 @@ class C01MainViewModel @Inject constructor(private val api: IAdaApi ) : ViewMode
                 listApi.C_SETxToCCNMCompList().let { downloadCNMComp ->
                     oDb.C_SETxInsertCCNMComp(downloadCNMComp)
                 }
-
             }
         } else {
             println("Error processing company data: ${aoResponse.code()}")
@@ -220,6 +218,5 @@ class C01MainViewModel @Inject constructor(private val api: IAdaApi ) : ViewMode
             println("Error processing district data: ${aoResponse.code()}")
         }
     }
-
 }
 
